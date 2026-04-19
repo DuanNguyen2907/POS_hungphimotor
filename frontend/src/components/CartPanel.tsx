@@ -1,4 +1,4 @@
-import { Button, List, Typography } from 'antd';
+import { Button, List, Space, Typography } from 'antd';
 import { MinusOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { usePosStore } from '../store/posStore';
 
@@ -9,8 +9,10 @@ interface CartPanelProps {
   onDecrease: (productId: string) => void;
 }
 
-export function CartPanel({ onIncrease, onDecrease }: CartPanelProps) {
+export function CartPanel() {
   const cartItems = usePosStore((s) => s.cartItems);
+  const increaseQuantity = usePosStore((s) => s.increaseQuantity);
+  const decreaseQuantity = usePosStore((s) => s.decreaseQuantity);
   const removeFromCart = usePosStore((s) => s.removeFromCart);
 
   return (
@@ -25,14 +27,14 @@ export function CartPanel({ onIncrease, onDecrease }: CartPanelProps) {
                 key="minus"
                 icon={<MinusOutlined />}
                 size="small"
-                onClick={() => onDecrease(item.productId)}
+                onClick={() => decreaseQuantity(item.productId)}
               />,
               <Text key="qty">{item.quantity}</Text>,
               <Button
                 key="plus"
                 icon={<PlusOutlined />}
                 size="small"
-                onClick={() => onIncrease(item.productId)}
+                onClick={() => increaseQuantity(item.productId)}
               />,
               <Button
                 key="remove"
