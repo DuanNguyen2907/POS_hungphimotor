@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
-import { Col, Layout, Row, Typography, message } from 'antd';
+import { useEffect, useState } from 'react';
+import { Alert, Col, Layout, Row, Spin, Typography, message } from 'antd';
 import { ProductList } from '../components/ProductList';
 import { CartPanel } from '../components/CartPanel';
 import { PaymentSection } from '../components/PaymentSection';
 import { CustomerSelect } from '../components/CustomerSelect';
+import { api } from '../api/api';
 import { productApi } from '../api/productApi';
 import { customerApi } from '../api/customerApi';
 import { usePosStore } from '../store/posStore';
