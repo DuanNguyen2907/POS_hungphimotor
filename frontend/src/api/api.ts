@@ -3,7 +3,6 @@ import type { Product } from '../types';
 
 export interface CreateOrderRequest {
   customerId?: string;
-  discountAmount?: number;
   items: Array<{
     productId: string;
     quantity: number;

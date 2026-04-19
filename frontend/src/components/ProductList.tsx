@@ -1,16 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Card, Col, Input, Row, Tag, Typography } from 'antd';
-import type { Product } from '../types';
+import { usePosStore } from '../store/posStore';
 
 const { Text } = Typography;
 
-interface ProductListProps {
-  products: Product[];
-  onAddToCart: (product: Product) => void;
-}
-
-export function ProductList({ products, onAddToCart }: ProductListProps) {
+export function ProductList() {
   const [searchText, setSearchText] = useState('');
+  const products = usePosStore((s) => s.products);
+  const addProductToCart = usePosStore((s) => s.addProductToCart);
 
   const filteredProducts = useMemo(
     () =>
@@ -35,7 +32,7 @@ export function ProductList({ products, onAddToCart }: ProductListProps) {
       <Row gutter={[12, 12]} style={{ marginTop: 12, maxHeight: 520, overflowY: 'auto' }}>
         {filteredProducts.map((product) => (
           <Col key={product.id} span={12}>
-            <Card hoverable size="small" onClick={() => onAddToCart(product)}>
+            <Card hoverable size="small" onClick={() => addProductToCart(product)}>
               <Text strong>{product.name}</Text>
               <br />
               <Text type="secondary">{product.barcode}</Text>
