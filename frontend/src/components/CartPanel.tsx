@@ -4,6 +4,11 @@ import { usePosStore } from '../store/posStore';
 
 const { Text } = Typography;
 
+interface CartPanelProps {
+  onIncrease: (productId: string) => void;
+  onDecrease: (productId: string) => void;
+}
+
 export function CartPanel() {
   const cartItems = usePosStore((s) => s.cartItems);
   const increaseQuantity = usePosStore((s) => s.increaseQuantity);
