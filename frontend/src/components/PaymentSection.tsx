@@ -1,62 +1,32 @@
-import { Button, Card, Divider, InputNumber, Select, Space, Typography } from 'antd';
-import type { DiscountType } from '../hooks/usePosLogic';
+import { Button, Card, Divider, Space, Typography, message } from 'antd';
+import { usePosStore } from '../store/posStore';
 
 const { Text, Title } = Typography;
 
-interface PaymentSectionProps {
-  subtotal: number;
-  discountType: DiscountType;
-  discountValue: number;
-  discountAmount: number;
-  total: number;
-  checkoutLoading: boolean;
-  onDiscountTypeChange: (type: DiscountType) => void;
-  onDiscountValueChange: (value: number) => void;
-  onCheckout: () => Promise<void>;
-}
+export function PaymentSection() {
+  const total = usePosStore((s) => s.getTotal());
+  const cartItems = usePosStore((s) => s.cartItems);
+  const selectedCustomer = usePosStore((s) => s.selectedCustomer);
+  const clearCart = usePosStore((s) => s.clearCart);
 
-export function PaymentSection({
-  subtotal,
-  discountType,
-  discountValue,
-  discountAmount,
-  total,
-  checkoutLoading,
-  onDiscountTypeChange,
-  onDiscountValueChange,
-  onCheckout
-}: PaymentSectionProps) {
+  const onCheckout = () => {
+    if (!cartItems.length) {
+      message.warning('Please add at least one product to cart');
+      return;
+    }
+
+    message.success(
+      `Checkout success. Customer: ${selectedCustomer?.fullName ?? 'Guest'} | Total: ${total.toLocaleString()} đ`
+    );
+    clearCart();
+  };
+
   return (
     <Card size="small" style={{ margin: 12 }}>
       <Space direction="vertical" style={{ width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Text>Subtotal</Text>
-          <Text>{subtotal.toLocaleString()} đ</Text>
-        </div>
-
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Select
-            style={{ width: 140 }}
-            value={discountType}
-            onChange={(value) => onDiscountTypeChange(value as DiscountType)}
-            options={[
-              { value: 'none', label: 'No discount' },
-              { value: 'fixed', label: 'Fixed (đ)' },
-              { value: 'percent', label: 'Percent (%)' }
-            ]}
-          />
-          <InputNumber
-            style={{ flex: 1 }}
-            min={0}
-            value={discountValue}
-            onChange={(value) => onDiscountValueChange(Number(value ?? 0))}
-            disabled={discountType === 'none'}
-          />
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Text>Discount</Text>
-          <Text>- {discountAmount.toLocaleString()} đ</Text>
+          <Text>Total items</Text>
+          <Text>{cartItems.reduce((sum, i) => sum + i.quantity, 0)}</Text>
         </div>
 
         <Divider style={{ margin: '8px 0' }} />
@@ -70,7 +40,7 @@ export function PaymentSection({
           </Title>
         </div>
 
-        <Button type="primary" size="large" block loading={checkoutLoading} onClick={() => void onCheckout()}>
+        <Button type="primary" size="large" block onClick={onCheckout}>
           Payment
         </Button>
       </Space>
