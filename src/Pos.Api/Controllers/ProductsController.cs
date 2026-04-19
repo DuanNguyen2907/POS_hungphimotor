@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pos.Application.DTOs;
 using Pos.Application.Interfaces;
@@ -6,6 +7,7 @@ namespace Pos.Api.Controllers;
 
 [ApiController]
 [Route("api/products")]
+[Authorize(Policy = "StaffOrAdmin")]
 public class ProductsController(IProductService productService) : ControllerBase
 {
     [HttpGet]
@@ -20,6 +22,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ProductResponseDto>> Create([FromBody] CreateProductDto request, CancellationToken cancellationToken)
     {
         var created = await productService.CreateAsync(request, cancellationToken);
@@ -27,6 +30,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ProductResponseDto>> Update(Guid id, [FromBody] UpdateProductDto request, CancellationToken cancellationToken)
     {
         var updated = await productService.UpdateAsync(id, request, cancellationToken);
@@ -34,6 +38,7 @@ public class ProductsController(IProductService productService) : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         => await productService.DeleteAsync(id, cancellationToken) ? NoContent() : NotFound();
 }

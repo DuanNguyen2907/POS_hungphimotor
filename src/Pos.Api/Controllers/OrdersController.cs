@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pos.Application.DTOs;
 using Pos.Application.Interfaces;
@@ -6,6 +7,7 @@ namespace Pos.Api.Controllers;
 
 [ApiController]
 [Route("api/orders")]
+[Authorize(Policy = "StaffOrAdmin")]
 public class OrdersController(IOrderService orderService) : ControllerBase
 {
     [HttpPost]

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pos.Application.DTOs;
 using Pos.Application.Interfaces;
@@ -6,6 +7,7 @@ namespace Pos.Api.Controllers;
 
 [ApiController]
 [Route("api/customers")]
+[Authorize(Policy = "StaffOrAdmin")]
 public class CustomersController(ICustomerService customerService) : ControllerBase
 {
     [HttpGet]
@@ -20,6 +22,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<CustomerResponseDto>> Create([FromBody] CreateCustomerDto request, CancellationToken cancellationToken)
     {
         var created = await customerService.CreateAsync(request, cancellationToken);
@@ -27,6 +30,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<CustomerResponseDto>> Update(Guid id, [FromBody] UpdateCustomerDto request, CancellationToken cancellationToken)
     {
         var updated = await customerService.UpdateAsync(id, request, cancellationToken);
@@ -34,6 +38,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         => await customerService.DeleteAsync(id, cancellationToken) ? NoContent() : NotFound();
 }
