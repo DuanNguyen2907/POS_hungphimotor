@@ -124,7 +124,6 @@ export function usePosLogic() {
 
       const order = await api.createOrder({
         customerId: selectedCustomer?.id,
-        discountAmount,
         items: cartItems.map((item) => ({
           productId: item.productId,
           quantity: item.quantity
