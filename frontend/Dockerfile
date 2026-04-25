@@ -11,7 +11,7 @@ ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 # Copy dependency manifests first for better cache usage
 COPY package*.json ./
-RUN npm ci
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
 # Copy source and build
 COPY . .
