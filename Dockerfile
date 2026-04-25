@@ -6,13 +6,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy only project file first for better layer caching
-COPY src/Api/*.csproj ./Api/
-RUN dotnet restore ./Api/Api.csproj
+# Copy project files first for better layer caching
+COPY src/Pos.Domain/Pos.Domain.csproj ./Pos.Domain/
+COPY src/Pos.Application/Pos.Application.csproj ./Pos.Application/
+COPY src/Pos.Infrastructure/Pos.Infrastructure.csproj ./Pos.Infrastructure/
+COPY src/Pos.Api/Pos.Api.csproj ./Pos.Api/
+RUN dotnet restore ./Pos.Api/Pos.Api.csproj
 
 # Copy source and publish
 COPY src/ ./
-RUN dotnet publish ./Api/Api.csproj \
+RUN dotnet publish ./Pos.Api/Pos.Api.csproj \
     -c Release \
     -o /app/publish \
     /p:UseAppHost=false
@@ -38,4 +41,4 @@ COPY --from=build /app/publish ./
 USER appuser
 
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "Api.dll"]
+ENTRYPOINT ["dotnet", "Pos.Api.dll"]
