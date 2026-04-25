@@ -29,6 +29,10 @@ export const usePosStore = create<PosState>((set, get) => ({
 
   addProductToCart: (product) =>
     set((state) => {
+      if (product.stock <= 0 || !product.isActive) {
+        return state;
+      }
+
       const existing = state.cartItems.find((x) => x.productId === product.id);
       if (existing) {
         return {
