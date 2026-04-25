@@ -1,13 +1,17 @@
 using Pos.Application.DTOs;
 using Pos.Application.Interfaces;
 using Pos.Domain.Entities;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Pos.Application.Services;
 
+public interface IAppTransaction : IAsyncDisposable
+{
+    Task CommitAsync(CancellationToken cancellationToken = default);
+}
+
 public interface ITransactionProvider
 {
-    Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+    Task<IAppTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
 }
 
 public class OrderService(
