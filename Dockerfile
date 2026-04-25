@@ -6,17 +6,19 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+# Copy project files first for better layer caching
+COPY src/Pos.Domain/Pos.Domain.csproj ./Pos.Domain/
+COPY src/Pos.Application/Pos.Application.csproj ./Pos.Application/
+COPY src/Pos.Infrastructure/Pos.Infrastructure.csproj ./Pos.Infrastructure/
+COPY src/Pos.Api/Pos.Api.csproj ./Pos.Api/
+RUN dotnet restore ./Pos.Api/Pos.Api.csproj
+
 # Copy source and publish
-COPY src/ ./src/
-RUN if [ -f ./src/Pos.Api/Pos.Api.csproj ]; then \
-      dotnet restore ./src/Pos.Api/Pos.Api.csproj && \
-      dotnet publish ./src/Pos.Api/Pos.Api.csproj -c Release -o /app/publish /p:UseAppHost=false; \
-    elif [ -f ./src/Api/Api.csproj ]; then \
-      dotnet restore ./src/Api/Api.csproj && \
-      dotnet publish ./src/Api/Api.csproj -c Release -o /app/publish /p:UseAppHost=false; \
-    else \
-      echo "Cannot find API project file. Expected ./src/Pos.Api/Pos.Api.csproj or ./src/Api/Api.csproj." && exit 1; \
-    fi
+COPY src/ ./
+RUN dotnet publish ./Pos.Api/Pos.Api.csproj \
+    -c Release \
+    -o /app/publish \
+    /p:UseAppHost=false
 
 # ==============================
 # 2) Runtime stage
@@ -39,4 +41,4 @@ COPY --from=build /app/publish ./
 USER appuser
 
 EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "if [ -f Pos.Api.dll ]; then dotnet Pos.Api.dll; elif [ -f Api.dll ]; then dotnet Api.dll; else echo 'No API dll found in /app' && exit 1; fi"]
+ENTRYPOINT ["dotnet", "Pos.Api.dll"]
