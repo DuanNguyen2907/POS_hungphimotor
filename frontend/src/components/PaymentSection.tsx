@@ -1,5 +1,6 @@
-import { Button, Card, Divider, Space, Typography, message } from 'antd';
+import { Button, Divider, Typography, message } from 'antd';
 import { useState } from 'react';
+import { CreditCardOutlined } from '@ant-design/icons';
 import { api } from '../api/api';
 import { usePosStore } from '../store/posStore';
 
@@ -30,9 +31,7 @@ export function PaymentSection() {
         }))
       });
 
-      const quantityByProductId = new Map(
-        cartItems.map((item) => [item.productId, item.quantity])
-      );
+      const quantityByProductId = new Map(cartItems.map((item) => [item.productId, item.quantity]));
 
       setProducts(
         products.map((product) => {
@@ -70,28 +69,33 @@ export function PaymentSection() {
   };
 
   return (
-    <Card size="small" style={{ margin: 12 }}>
-      <Space direction="vertical" style={{ width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Text>Total items</Text>
-          <Text>{cartItems.reduce((sum, i) => sum + i.quantity, 0)}</Text>
-        </div>
+    <div className="kv-payment-box">
+      <div className="kv-payment-row">
+        <Text type="secondary">Số lượng hàng</Text>
+        <Text strong>{cartItems.reduce((sum, i) => sum + i.quantity, 0)}</Text>
+      </div>
 
-        <Divider style={{ margin: '8px 0' }} />
+      <Divider style={{ margin: '10px 0' }} />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Title level={4} style={{ margin: 0 }}>
-            Grand Total
-          </Title>
-          <Title level={4} style={{ margin: 0, color: '#1677ff' }}>
-            {total.toLocaleString()} đ
-          </Title>
-        </div>
+      <div className="kv-payment-row">
+        <Title level={4} style={{ margin: 0 }}>
+          Khách cần trả
+        </Title>
+        <Title level={4} style={{ margin: 0, color: '#0f62fe' }}>
+          {total.toLocaleString()} đ
+        </Title>
+      </div>
 
-        <Button type="primary" size="large" block onClick={onCheckout} loading={isSubmitting}>
-          Payment
-        </Button>
-      </Space>
-    </Card>
+      <Button
+        type="primary"
+        size="large"
+        block
+        onClick={onCheckout}
+        loading={isSubmitting}
+        icon={<CreditCardOutlined />}
+      >
+        Thanh toán
+      </Button>
+    </div>
   );
 }
