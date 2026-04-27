@@ -1,13 +1,8 @@
-import { Button, List, Space, Typography } from 'antd';
+import { Button, List, Typography } from 'antd';
 import { MinusOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { usePosStore } from '../store/posStore';
 
 const { Text } = Typography;
-
-interface CartPanelProps {
-  onIncrease: (productId: string) => void;
-  onDecrease: (productId: string) => void;
-}
 
 export function CartPanel() {
   const cartItems = usePosStore((s) => s.cartItems);
@@ -16,40 +11,42 @@ export function CartPanel() {
   const removeFromCart = usePosStore((s) => s.removeFromCart);
 
   return (
-    <div style={{ padding: 12, height: '100%', overflowY: 'auto' }}>
+    <div className="kv-cart-list">
       <List
         dataSource={cartItems}
-        locale={{ emptyText: 'Cart is empty' }}
+        locale={{ emptyText: 'Giỏ hàng đang trống' }}
         renderItem={(item) => (
-          <List.Item
-            actions={[
+          <List.Item className="kv-cart-item">
+            <div className="kv-cart-item-main">
+              <Text strong>{item.name}</Text>
+              <Text type="secondary">
+                {item.unitPrice.toLocaleString()} đ x {item.quantity}
+              </Text>
+            </div>
+
+            <div className="kv-cart-actions">
               <Button
-                key="minus"
                 icon={<MinusOutlined />}
                 size="small"
                 onClick={() => decreaseQuantity(item.productId)}
-              />,
-              <Text key="qty">{item.quantity}</Text>,
+              />
+              <Text className="kv-cart-qty">{item.quantity}</Text>
               <Button
-                key="plus"
                 icon={<PlusOutlined />}
                 size="small"
                 onClick={() => increaseQuantity(item.productId)}
-              />,
+              />
               <Button
-                key="remove"
                 icon={<DeleteOutlined />}
                 danger
                 size="small"
                 onClick={() => removeFromCart(item.productId)}
               />
-            ]}
-          >
-            <List.Item.Meta
-              title={item.name}
-              description={`${item.unitPrice.toLocaleString()} đ x ${item.quantity}`}
-            />
-            <Text strong>{(item.unitPrice * item.quantity).toLocaleString()} đ</Text>
+            </div>
+
+            <Text strong className="kv-cart-line-total">
+              {(item.unitPrice * item.quantity).toLocaleString()} đ
+            </Text>
           </List.Item>
         )}
       />

@@ -8,10 +8,13 @@ export function CustomerSelect() {
 
   return (
     <Select
-      style={{ width: '100%' }}
-      placeholder="Select customer"
+      size="large"
+      className="kv-customer-select"
+      placeholder="Chọn khách hàng"
       value={selectedCustomer?.id}
       allowClear
+      showSearch
+      optionFilterProp="label"
       onChange={(value) => {
         const customer = customers.find((c) => c.id === value);
         setSelectedCustomer(customer);
